@@ -25,6 +25,17 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-bottom: 30px;
     }
+    .task-completed {
+      opacity: 0.6;
+    }
+    .task-completed .card-text {
+      text-decoration: line-through;
+      color: #6c757d;
+    }
+    .task-checkbox {
+      transform: scale(1.2);
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
@@ -59,7 +70,14 @@
     <div class="col-12">
       <h4 class="mb-3">
         <i class="bi bi-list-task"></i> Your Tasks
-        <span class="badge bg-primary ms-2"><%= todos.length %></span>
+        <span class="badge bg-primary ms-2">
+          <%= todos.filter(t => !t.completed).length %> active
+        </span>
+        <% if (todos.filter(t => t.completed).length > 0) { %>
+          <span class="badge bg-success ms-1">
+            <%= todos.filter(t => t.completed).length %> completed
+          </span>
+        <% } %>
       </h4>
       
       <% if(todos.length === 0) { %>
@@ -71,13 +89,30 @@
         <div class="row">
           <% for(let todo of todos){ %>
             <div class="col-md-6 col-lg-4 mb-3">
-              <div class="card task-card">
+              <div class="card task-card <%= todo.completed ? 'task-completed' : '' %>">
                 <div class="card-body">
-                  <p class="card-text mb-2"><%= todo.content %></p>
-                  <small class="text-muted">
-                    <i class="bi bi-calendar3"></i> 
-                    Added: <%= new Date(todo.created_at || Date.now()).toLocaleDateString() %>
-                  </small>
+                  <div class="d-flex align-items-start">
+                    <form action="/toggle/<%= todo.id %>" method="post" class="me-2">
+                      <input 
+                        type="checkbox" 
+                        class="form-check-input task-checkbox" 
+                        <%= todo.completed ? 'checked' : '' %>
+                        onchange="this.form.submit()"
+                      />
+                    </form>
+                    <div class="flex-grow-1">
+                      <p class="card-text mb-2"><%= todo.content %></p>
+                      <small class="text-muted">
+                        <i class="bi bi-calendar3"></i> 
+                        Added: <%= new Date(todo.created_at || Date.now()).toLocaleDateString() %>
+                      </small>
+                      <% if (todo.completed) { %>
+                        <br><small class="text-success">
+                          <i class="bi bi-check-circle"></i> Completed
+                        </small>
+                      <% } %>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

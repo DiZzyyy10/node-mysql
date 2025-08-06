@@ -70,6 +70,40 @@ router.post('/', function (req, res, next) {
     });
 });
 
+// Route to toggle task completion
+router.post('/toggle/:id', function (req, res, next) {
+  const isAuth = req.isAuthenticated();
+  
+  if (!isAuth) {
+    return res.redirect('/signin');
+  }
+  
+  const taskId = req.params.id;
+  const userId = req.user.id;
+  
+  // First verify the task belongs to the current user
+  knex("tasks")
+    .where({id: taskId, user_id: userId})
+    .first()
+    .then(function (task) {
+      if (!task) {
+        return res.status(404).json({error: 'Task not found'});
+      }
+      
+      // Toggle the completed status
+      return knex("tasks")
+        .where({id: taskId, user_id: userId})
+        .update({completed: !task.completed});
+    })
+    .then(function () {
+      res.redirect('/');
+    })
+    .catch(function (err) {
+      console.error('Error toggling task:', err);
+      res.status(500).json({error: 'Failed to toggle task'});
+    });
+});
+
 router.use('/signup', require('./signup'));
 router.use('/signin', require('./signin'));
 router.use('/logout', require('./logout'));
