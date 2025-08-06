@@ -11,7 +11,11 @@ router.get('/', function (req, res, next) {
     knex("tasks")
       .select("*")
       .where({user_id: userId})
-      .orderBy('created_at', 'desc')
+      .orderBy([
+        { column: 'status', order: 'asc' },
+        { column: 'order_position', order: 'asc' },
+        { column: 'id', order: 'desc' }
+      ])
       .then(function (results) {
         res.render('index', {
           title: 'TaskFlow',
@@ -88,12 +92,14 @@ router.post('/status/:id', function (req, res, next) {
   const isAuth = req.isAuthenticated();
   
   if (!isAuth) {
-    return res.redirect('/signin');
+    return res.status(401).json({error: 'Not authenticated'});
   }
   
   const taskId = req.params.id;
   const userId = req.user.id;
   const newStatus = req.body.status;
+  
+  console.log('Status update request:', { taskId, userId, newStatus });
   
   // Validate status
   if (!['todo', 'in_progress', 'done'].includes(newStatus)) {
@@ -113,11 +119,70 @@ router.post('/status/:id', function (req, res, next) {
       if (updatedCount === 0) {
         return res.status(404).json({error: 'Task not found'});
       }
-      res.json({success: true});
+      console.log('Task status updated successfully');
+      res.json({success: true, taskId, newStatus});
     })
     .catch(function (err) {
       console.error('Error updating task status:', err);
       res.status(500).json({error: 'Failed to update task status'});
+    });
+});
+
+// Route to reorder tasks within the same column
+router.post('/reorder', function (req, res, next) {
+  const isAuth = req.isAuthenticated();
+  
+  if (!isAuth) {
+    return res.status(401).json({error: 'Not authenticated'});
+  }
+  
+  const userId = req.user.id;
+  const { taskId, newPosition, status } = req.body;
+  
+  console.log('Reorder request:', { taskId, newPosition, status, userId });
+  
+  // Validate inputs
+  if (!taskId || newPosition === undefined || !status) {
+    return res.status(400).json({error: 'Missing required parameters'});
+  }
+  
+  // First, get all tasks in the same status for this user, ordered by current position
+  knex("tasks")
+    .where({ user_id: userId, status: status })
+    .orderBy('order_position', 'asc')
+    .then(function (tasks) {
+      if (!tasks || tasks.length === 0) {
+        return res.status(404).json({error: 'No tasks found'});
+      }
+      
+      // Find the task being moved
+      const taskIndex = tasks.findIndex(t => t.id == taskId);
+      if (taskIndex === -1) {
+        return res.status(404).json({error: 'Task not found'});
+      }
+      
+      // Remove the task from its current position
+      const [movedTask] = tasks.splice(taskIndex, 1);
+      
+      // Insert it at the new position
+      tasks.splice(newPosition, 0, movedTask);
+      
+      // Update order_position for all affected tasks
+      const updatePromises = tasks.map((task, index) => {
+        return knex("tasks")
+          .where({ id: task.id, user_id: userId })
+          .update({ order_position: index });
+      });
+      
+      return Promise.all(updatePromises);
+    })
+    .then(function () {
+      console.log('Task order updated successfully');
+      res.json({success: true, taskId, newPosition, status});
+    })
+    .catch(function (err) {
+      console.error('Error reordering tasks:', err);
+      res.status(500).json({error: 'Failed to reorder tasks'});
     });
 });
 
@@ -141,13 +206,25 @@ router.post('/toggle/:id', function (req, res, next) {
         return res.status(404).json({error: 'Task not found'});
       }
       
-      // Toggle the completed status
+      // Toggle the completed status and sync with Kanban status
+      const newCompleted = !task.completed;
+      const newStatus = newCompleted ? 'done' : 'todo';
+      
       return knex("tasks")
         .where({id: taskId, user_id: userId})
-        .update({completed: !task.completed});
+        .update({
+          completed: newCompleted,
+          status: newStatus
+        });
     })
     .then(function () {
-      res.redirect('/');
+      // Preserve view parameter if provided
+      const view = req.query.view;
+      if (view) {
+        res.redirect(`/?view=${view}`);
+      } else {
+        res.redirect('/');
+      }
     })
     .catch(function (err) {
       console.error('Error toggling task:', err);
@@ -211,7 +288,13 @@ router.post('/edit/:id', function (req, res, next) {
       if (updatedCount === 0) {
         return res.status(404).json({error: 'Task not found'});
       }
-      res.redirect('/');
+      // Preserve view parameter if provided
+      const view = req.query.view;
+      if (view) {
+        res.redirect(`/?view=${view}`);
+      } else {
+        res.redirect('/');
+      }
     })
     .catch(function (err) {
       console.error('Error updating task:', err);

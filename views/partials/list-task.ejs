@@ -5,7 +5,7 @@
     
     <div class="card-body">
       <div class="d-flex align-items-start">
-        <form action="/toggle/<%= todo.id %>" method="post" class="me-2">
+        <form action="/toggle/<%= todo.id %>" method="post" class="me-2" onsubmit="addViewParam(this)">
           <input 
             type="checkbox" 
             class="form-check-input task-checkbox" 
@@ -24,7 +24,7 @@
             </div>
             <small class="text-muted">
               <i class="bi bi-calendar3"></i> 
-              Added: <%= new Date(todo.created_at || Date.now()).toLocaleDateString() %>
+              Task #<%= todo.id %>
             </small>
             <% if (todo.due_date) { %>
               <br><small class="due-date-indicator">

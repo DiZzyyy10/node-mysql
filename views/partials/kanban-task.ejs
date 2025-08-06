@@ -43,7 +43,7 @@
   <div class="d-flex justify-content-between align-items-center mt-2">
     <small class="text-muted">
       <i class="bi bi-calendar3"></i> 
-      <%= new Date(todo.created_at || Date.now()).toLocaleDateString() %>
+      Task #<%= todo.id %>
     </small>
     <div class="d-flex gap-1">
       <button class="btn btn-outline-primary btn-sm" onclick="editTaskModal(<%= todo.id %>)" title="Edit task">
