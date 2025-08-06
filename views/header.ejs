@@ -7,6 +7,20 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <% if(isAuth){ %>
+          <li class="nav-item">
+            <a class="nav-link" href="/?view=list" id="list-view-btn">
+              <i class="bi bi-list-ul"></i> List View
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/?view=kanban" id="kanban-view-btn">
+              <i class="bi bi-kanban"></i> Kanban View
+            </a>
+          </li>
+        <% } %>
+      </ul>
       <ul class="navbar-nav ms-auto">
         <% if(isAuth){ %>
           <li class="nav-item">

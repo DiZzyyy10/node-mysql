@@ -1,0 +1,57 @@
+<div class="kanban-task" draggable="true" data-task-id="<%= todo.id %>">
+  <!-- Priority indicator -->
+  <div class="priority-indicator priority-<%= todo.priority %>"></div>
+  
+  <div class="d-flex justify-content-between align-items-start mb-2">
+    <p class="mb-0 fw-medium"><%= todo.content %></p>
+    <span class="badge priority-badge bg-<%= todo.priority === 'high' ? 'danger' : todo.priority === 'medium' ? 'warning' : 'success' %>">
+      <%= todo.priority === 'high' ? '🔴' : todo.priority === 'medium' ? '🟡' : '🟢' %>
+    </span>
+  </div>
+  
+  <% if (todo.due_date) { %>
+    <small class="due-date-indicator d-block">
+      <i class="bi bi-clock"></i>
+      <% 
+        const today = new Date();
+        const dueDate = new Date(todo.due_date);
+        const diffTime = dueDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        let dueDateClass = '';
+        let dueDateText = '';
+        
+        if (diffDays < 0) {
+          dueDateClass = 'due-overdue';
+          dueDateText = `Overdue by ${Math.abs(diffDays)} day(s)`;
+        } else if (diffDays === 0) {
+          dueDateClass = 'due-today';
+          dueDateText = 'Due today';
+        } else if (diffDays === 1) {
+          dueDateClass = 'due-upcoming';
+          dueDateText = 'Due tomorrow';
+        } else if (diffDays <= 7) {
+          dueDateClass = 'due-upcoming';
+          dueDateText = `Due in ${diffDays} days`;
+        } else {
+          dueDateText = `Due ${dueDate.toLocaleDateString()}`;
+        }
+      %>
+      <span class="<%= dueDateClass %>"><%= dueDateText %></span>
+    </small>
+  <% } %>
+  
+  <div class="d-flex justify-content-between align-items-center mt-2">
+    <small class="text-muted">
+      <i class="bi bi-calendar3"></i> 
+      <%= new Date(todo.created_at || Date.now()).toLocaleDateString() %>
+    </small>
+    <div class="d-flex gap-1">
+      <button class="btn btn-outline-primary btn-sm" onclick="editTaskModal(<%= todo.id %>)" title="Edit task">
+        <i class="bi bi-pencil"></i>
+      </button>
+      <button class="btn btn-outline-danger btn-sm" onclick="deleteTask(<%= todo.id %>)" title="Delete task">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  </div>
+</div>
