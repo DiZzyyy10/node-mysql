@@ -104,6 +104,64 @@ router.post('/toggle/:id', function (req, res, next) {
     });
 });
 
+// Route to delete a task
+router.post('/delete/:id', function (req, res, next) {
+  const isAuth = req.isAuthenticated();
+  
+  if (!isAuth) {
+    return res.redirect('/signin');
+  }
+  
+  const taskId = req.params.id;
+  const userId = req.user.id;
+  
+  knex("tasks")
+    .where({id: taskId, user_id: userId})
+    .del()
+    .then(function (deletedCount) {
+      if (deletedCount === 0) {
+        return res.status(404).json({error: 'Task not found'});
+      }
+      res.redirect('/');
+    })
+    .catch(function (err) {
+      console.error('Error deleting task:', err);
+      res.status(500).json({error: 'Failed to delete task'});
+    });
+});
+
+// Route to update a task
+router.post('/edit/:id', function (req, res, next) {
+  const isAuth = req.isAuthenticated();
+  
+  if (!isAuth) {
+    return res.redirect('/signin');
+  }
+  
+  const taskId = req.params.id;
+  const userId = req.user.id;
+  const newContent = req.body.content;
+  
+  // Validate that content is provided
+  if (!newContent || newContent.trim() === '') {
+    return res.redirect('/');
+  }
+  
+  knex("tasks")
+    .where({id: taskId, user_id: userId})
+    .update({content: newContent.trim()})
+    .then(function (updatedCount) {
+      if (updatedCount === 0) {
+        return res.status(404).json({error: 'Task not found'});
+      }
+      res.redirect('/');
+    })
+    .catch(function (err) {
+      console.error('Error updating task:', err);
+      res.status(500).json({error: 'Failed to update task'});
+    });
+});
+
 router.use('/signup', require('./signup'));
 router.use('/signin', require('./signin'));
 router.use('/logout', require('./logout'));
