@@ -50,6 +50,24 @@
       padding: 0.25rem 0.5rem;
       font-size: 0.875rem;
     }
+    .priority-indicator {
+      width: 4px;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-radius: 8px 0 0 8px;
+    }
+    .priority-high { background-color: #dc3545; }
+    .priority-medium { background-color: #ffc107; }
+    .priority-low { background-color: #198754; }
+    .priority-badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
+    .task-card {
+      position: relative;
+    }
   </style>
 </head>
 <body>
@@ -63,18 +81,28 @@
       <i class="bi bi-plus-circle"></i> Add New Task
     </h4>
     <form action="/" method="post">
-      <div class="input-group">
-        <input 
-          required 
-          type="text" 
-          name="add" 
-          class="form-control form-control-lg" 
-          placeholder="What needs to be done?"
-          style="border-right: none;"
-        />
-        <button type="submit" class="btn btn-primary btn-lg">
-          <i class="bi bi-plus"></i> Add Task
-        </button>
+      <div class="row g-2">
+        <div class="col-md-8">
+          <input 
+            required 
+            type="text" 
+            name="add" 
+            class="form-control form-control-lg" 
+            placeholder="What needs to be done?"
+          />
+        </div>
+        <div class="col-md-2">
+          <select name="priority" class="form-select form-select-lg">
+            <option value="low">🟢 Low</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="high">🔴 High</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary btn-lg w-100">
+            <i class="bi bi-plus"></i> Add
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -104,6 +132,9 @@
           <% for(let todo of todos){ %>
             <div class="col-md-6 col-lg-4 mb-3">
               <div class="card task-card <%= todo.completed ? 'task-completed' : '' %>">
+                <!-- Priority indicator -->
+                <div class="priority-indicator priority-<%= todo.priority %>"></div>
+                
                 <div class="card-body">
                   <div class="d-flex align-items-start">
                     <form action="/toggle/<%= todo.id %>" method="post" class="me-2">
@@ -117,7 +148,12 @@
                     <div class="flex-grow-1">
                       <!-- Display mode -->
                       <div class="task-display-<%= todo.id %>">
-                        <p class="card-text mb-2"><%= todo.content %></p>
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                          <p class="card-text mb-0"><%= todo.content %></p>
+                          <span class="badge priority-badge bg-<%= todo.priority === 'high' ? 'danger' : todo.priority === 'medium' ? 'warning' : 'success' %>">
+                            <%= todo.priority === 'high' ? '🔴 High' : todo.priority === 'medium' ? '🟡 Medium' : '🟢 Low' %>
+                          </span>
+                        </div>
                         <small class="text-muted">
                           <i class="bi bi-calendar3"></i> 
                           Added: <%= new Date(todo.created_at || Date.now()).toLocaleDateString() %>
@@ -140,6 +176,13 @@
                               value="<%= todo.content %>" 
                               required
                             />
+                          </div>
+                          <div class="mb-2">
+                            <select name="priority" class="form-select form-select-sm">
+                              <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>>🟢 Low</option>
+                              <option value="medium" <%= todo.priority === 'medium' ? 'selected' : '' %>>🟡 Medium</option>
+                              <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>>🔴 High</option>
+                            </select>
                           </div>
                           <div class="d-flex gap-1">
                             <button type="submit" class="btn btn-success btn-sm">

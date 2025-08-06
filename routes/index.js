@@ -43,6 +43,7 @@ router.post('/', function (req, res, next) {
   
   const userId = req.user.id;
   const todo = req.body.add;
+  const priority = req.body.priority || 'medium';
   
   // Validate that todo content is provided
   if (!todo || todo.trim() === '') {
@@ -55,7 +56,11 @@ router.post('/', function (req, res, next) {
   }
   
   knex("tasks")
-    .insert({user_id: userId, content: todo.trim()})
+    .insert({
+      user_id: userId, 
+      content: todo.trim(),
+      priority: priority
+    })
     .then(function () {
       res.redirect('/')
     })
@@ -141,6 +146,7 @@ router.post('/edit/:id', function (req, res, next) {
   const taskId = req.params.id;
   const userId = req.user.id;
   const newContent = req.body.content;
+  const newPriority = req.body.priority || 'medium';
   
   // Validate that content is provided
   if (!newContent || newContent.trim() === '') {
@@ -149,7 +155,10 @@ router.post('/edit/:id', function (req, res, next) {
   
   knex("tasks")
     .where({id: taskId, user_id: userId})
-    .update({content: newContent.trim()})
+    .update({
+      content: newContent.trim(),
+      priority: newPriority
+    })
     .then(function (updatedCount) {
       if (updatedCount === 0) {
         return res.status(404).json({error: 'Task not found'});
