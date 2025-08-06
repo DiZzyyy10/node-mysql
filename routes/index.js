@@ -44,6 +44,7 @@ router.post('/', function (req, res, next) {
   const userId = req.user.id;
   const todo = req.body.add;
   const priority = req.body.priority || 'medium';
+  const dueDate = req.body.due_date || null;
   
   // Validate that todo content is provided
   if (!todo || todo.trim() === '') {
@@ -59,7 +60,8 @@ router.post('/', function (req, res, next) {
     .insert({
       user_id: userId, 
       content: todo.trim(),
-      priority: priority
+      priority: priority,
+      due_date: dueDate
     })
     .then(function () {
       res.redirect('/')
@@ -147,6 +149,7 @@ router.post('/edit/:id', function (req, res, next) {
   const userId = req.user.id;
   const newContent = req.body.content;
   const newPriority = req.body.priority || 'medium';
+  const newDueDate = req.body.due_date || null;
   
   // Validate that content is provided
   if (!newContent || newContent.trim() === '') {
@@ -157,7 +160,8 @@ router.post('/edit/:id', function (req, res, next) {
     .where({id: taskId, user_id: userId})
     .update({
       content: newContent.trim(),
-      priority: newPriority
+      priority: newPriority,
+      due_date: newDueDate
     })
     .then(function (updatedCount) {
       if (updatedCount === 0) {

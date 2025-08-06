@@ -68,6 +68,20 @@
     .task-card {
       position: relative;
     }
+    .due-date-indicator {
+      font-size: 0.75rem;
+    }
+    .due-today {
+      color: #fd7e14;
+      font-weight: bold;
+    }
+    .due-overdue {
+      color: #dc3545;
+      font-weight: bold;
+    }
+    .due-upcoming {
+      color: #6f42c1;
+    }
   </style>
 </head>
 <body>
@@ -82,7 +96,7 @@
     </h4>
     <form action="/" method="post">
       <div class="row g-2">
-        <div class="col-md-8">
+        <div class="col-md-6">
           <input 
             required 
             type="text" 
@@ -97,6 +111,14 @@
             <option value="medium" selected>🟡 Medium</option>
             <option value="high">🔴 High</option>
           </select>
+        </div>
+        <div class="col-md-2">
+          <input 
+            type="date" 
+            name="due_date" 
+            class="form-control form-control-lg"
+            min="<%= new Date().toISOString().split('T')[0] %>"
+          />
         </div>
         <div class="col-md-2">
           <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -158,6 +180,36 @@
                           <i class="bi bi-calendar3"></i> 
                           Added: <%= new Date(todo.created_at || Date.now()).toLocaleDateString() %>
                         </small>
+                        <% if (todo.due_date) { %>
+                          <br><small class="due-date-indicator">
+                            <i class="bi bi-clock"></i>
+                            <% 
+                              const today = new Date();
+                              const dueDate = new Date(todo.due_date);
+                              const diffTime = dueDate.getTime() - today.getTime();
+                              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                              let dueDateClass = '';
+                              let dueDateText = '';
+                              
+                              if (diffDays < 0) {
+                                dueDateClass = 'due-overdue';
+                                dueDateText = `Overdue by ${Math.abs(diffDays)} day(s)`;
+                              } else if (diffDays === 0) {
+                                dueDateClass = 'due-today';
+                                dueDateText = 'Due today';
+                              } else if (diffDays === 1) {
+                                dueDateClass = 'due-upcoming';
+                                dueDateText = 'Due tomorrow';
+                              } else if (diffDays <= 7) {
+                                dueDateClass = 'due-upcoming';
+                                dueDateText = `Due in ${diffDays} days`;
+                              } else {
+                                dueDateText = `Due ${dueDate.toLocaleDateString()}`;
+                              }
+                            %>
+                            <span class="<%= dueDateClass %>"><%= dueDateText %></span>
+                          </small>
+                        <% } %>
                         <% if (todo.completed) { %>
                           <br><small class="text-success">
                             <i class="bi bi-check-circle"></i> Completed
@@ -177,12 +229,23 @@
                               required
                             />
                           </div>
-                          <div class="mb-2">
-                            <select name="priority" class="form-select form-select-sm">
-                              <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>>🟢 Low</option>
-                              <option value="medium" <%= todo.priority === 'medium' ? 'selected' : '' %>>🟡 Medium</option>
-                              <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>>🔴 High</option>
-                            </select>
+                          <div class="row g-2 mb-2">
+                            <div class="col-6">
+                              <select name="priority" class="form-select form-select-sm">
+                                <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>>🟢 Low</option>
+                                <option value="medium" <%= todo.priority === 'medium' ? 'selected' : '' %>>🟡 Medium</option>
+                                <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>>🔴 High</option>
+                              </select>
+                            </div>
+                            <div class="col-6">
+                              <input 
+                                type="date" 
+                                name="due_date" 
+                                class="form-control form-control-sm"
+                                value="<%= todo.due_date ? new Date(todo.due_date).toISOString().split('T')[0] : '' %>"
+                                min="<%= new Date().toISOString().split('T')[0] %>"
+                              />
+                            </div>
                           </div>
                           <div class="d-flex gap-1">
                             <button type="submit" class="btn btn-success btn-sm">
@@ -244,6 +307,27 @@ function cancelEdit(taskId) {
   document.querySelector('.task-display-' + taskId).style.display = 'block';
   // Hide edit mode
   document.querySelector('.task-edit-' + taskId).style.display = 'none';
+}
+
+function formatDueDate(dueDate) {
+  if (!dueDate) return '';
+  
+  const today = new Date();
+  const due = new Date(dueDate);
+  const diffTime = due.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) {
+    return { text: `Overdue by ${Math.abs(diffDays)} day(s)`, class: 'due-overdue' };
+  } else if (diffDays === 0) {
+    return { text: 'Due today', class: 'due-today' };
+  } else if (diffDays === 1) {
+    return { text: 'Due tomorrow', class: 'due-upcoming' };
+  } else if (diffDays <= 7) {
+    return { text: `Due in ${diffDays} days`, class: 'due-upcoming' };
+  } else {
+    return { text: `Due ${due.toLocaleDateString()}`, class: '' };
+  }
 }
 </script>
 </body>
