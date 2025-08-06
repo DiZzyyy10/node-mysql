@@ -36,9 +36,6 @@ router.get('/', function (req, res, next) {
 router.post('/', function (req, res, next) {
   const isAuth = req.isAuthenticated();
   
-  console.log('POST / - isAuth:', isAuth);
-  console.log('POST / - req.user:', req.user);
-  
   if (!isAuth) {
     // If user is not authenticated, redirect to signin
     return res.redirect('/signin');
@@ -46,9 +43,6 @@ router.post('/', function (req, res, next) {
   
   const userId = req.user.id;
   const todo = req.body.add;
-  
-  console.log('POST / - userId:', userId);
-  console.log('POST / - todo:', todo);
   
   // Validate that todo content is provided
   if (!todo || todo.trim() === '') {

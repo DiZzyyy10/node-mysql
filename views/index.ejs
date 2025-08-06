@@ -2,43 +2,100 @@
 <html>
 <head>
   <title><%= title %></title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .task-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .task-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .add-task-form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+  </style>
 </head>
 <body>
 <%- include('./header'); %>
 <%- include('./error_messages'); %>
 <% if(isAuth) { %>
-<div class="container">
+<div class="container mt-4">
+  <!-- Add Task Form -->
+  <div class="add-task-form">
+    <h4 class="mb-3">
+      <i class="bi bi-plus-circle"></i> Add New Task
+    </h4>
+    <form action="/" method="post">
+      <div class="input-group">
+        <input 
+          required 
+          type="text" 
+          name="add" 
+          class="form-control form-control-lg" 
+          placeholder="What needs to be done?"
+          style="border-right: none;"
+        />
+        <button type="submit" class="btn btn-primary btn-lg">
+          <i class="bi bi-plus"></i> Add Task
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tasks List -->
   <div class="row">
-    <div class="col-md-6">
-      <form action="/" method="post">
-        <label>タスクの追加</label>
-        <input required type="text" name="add" placeholder="何をする?"/>
-        <input type="submit" value="追加"/>
-      </form>
-    </div>
-    <div class="col-md-6">
-      <ul>
-        <% for(let todo of todos){ %>
-          <li><span><%= todo.content %></span></li>
-        <% } %>
-      </ul>
+    <div class="col-12">
+      <h4 class="mb-3">
+        <i class="bi bi-list-task"></i> Your Tasks
+        <span class="badge bg-primary ms-2"><%= todos.length %></span>
+      </h4>
+      
+      <% if(todos.length === 0) { %>
+        <div class="text-center py-5">
+          <i class="bi bi-clipboard-check" style="font-size: 4rem; color: #dee2e6;"></i>
+          <p class="text-muted mt-3">No tasks yet! Add your first task above.</p>
+        </div>
+      <% } else { %>
+        <div class="row">
+          <% for(let todo of todos){ %>
+            <div class="col-md-6 col-lg-4 mb-3">
+              <div class="card task-card">
+                <div class="card-body">
+                  <p class="card-text mb-2"><%= todo.content %></p>
+                  <small class="text-muted">
+                    <i class="bi bi-calendar3"></i> 
+                    Added: <%= new Date(todo.created_at || Date.now()).toLocaleDateString() %>
+                  </small>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
     </div>
   </div>
 </div>
 <% } else { %>
-  <h1>Welcome to the TodoApp</h1>
-  <a class="btn btn-primary" href="/signup" role="button">Sign up now!</a>
+  <div class="container text-center mt-5">
+    <h1 class="display-4 mb-4">Welcome to TaskFlow</h1>
+    <p class="lead mb-4">Your personal productivity companion</p>
+    <a class="btn btn-primary btn-lg" href="/signup" role="button">
+      <i class="bi bi-person-plus"></i> Get Started
+    </a>
+  </div>
 <% } %>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
-        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
-        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
-        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
