@@ -127,9 +127,12 @@
     }
 
     .divider {
-      margin: 2rem 0;
+      margin: 2.5rem 0;
       text-align: center;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .divider::before {
@@ -139,14 +142,21 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: #e2e8f0;
+      background: linear-gradient(to right, transparent, #cbd5e0 20%, #cbd5e0 80%, transparent);
+      transform: translateY(-50%);
     }
 
     .divider span {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 0 1rem;
-      color: #718096;
+      background: rgba(255, 255, 255, 1);
+      padding: 0 1.5rem;
+      color: #64748b;
       font-size: 0.875rem;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      line-height: 1.5;
     }
 
     .auth-links {
@@ -215,12 +225,13 @@
       }
 
       .divider::before {
-        background: #4a5568;
+        background: linear-gradient(to right, transparent, #4a5568 20%, #4a5568 80%, transparent);
       }
 
       .divider span {
-        background: rgba(30, 30, 46, 0.95);
+        background: rgba(30, 30, 46, 1);
         color: #a0aec0;
+        border-color: #4a5568;
       }
     }
 
