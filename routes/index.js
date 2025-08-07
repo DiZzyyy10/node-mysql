@@ -58,10 +58,12 @@ router.post('/', function (req, res, next) {
   
   // Validate that todo content is provided
   if (!todo || todo.trim() === '') {
+    const view = req.query.view;
     return res.render('index', {
       title: 'ToDo App',
       todos: [],
       isAuth: isAuth,
+      view: view,
       errorMessage: ['Please enter a task'],
     });
   }
@@ -74,14 +76,22 @@ router.post('/', function (req, res, next) {
       due_date: dueDate
     })
     .then(function () {
-      res.redirect('/')
+      // Preserve view parameter if provided
+      const view = req.query.view;
+      if (view) {
+        res.redirect(`/?view=${view}`);
+      } else {
+        res.redirect('/');
+      }
     })
     .catch(function (err) {
       console.error('Error inserting task:', err);
+      const view = req.query.view;
       res.render('index', {
         title: 'ToDo App',
         todos: [],
         isAuth: isAuth,
+        view: view,
         errorMessage: [err.sqlMessage],
       });
     });
@@ -250,7 +260,13 @@ router.post('/delete/:id', function (req, res, next) {
       if (deletedCount === 0) {
         return res.status(404).json({error: 'Task not found'});
       }
-      res.redirect('/');
+      // Preserve view parameter if provided
+      const view = req.query.view;
+      if (view) {
+        res.redirect(`/?view=${view}`);
+      } else {
+        res.redirect('/');
+      }
     })
     .catch(function (err) {
       console.error('Error deleting task:', err);
