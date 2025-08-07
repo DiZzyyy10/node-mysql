@@ -18,7 +18,12 @@
     "signin_button": "Sign In",
     "signup_button": "Sign Up",
     "no_account": "Don't have an account?",
-    "have_account": "Already have an account?"
+    "have_account": "Already have an account?",
+    "username_not_found": "Username not found. Please check your username or sign up for a new account.",
+    "incorrect_password": "Incorrect password. Please try again.",
+    "login_system_error": "Login failed due to a system error. Please try again later.",
+    "login_general_error": "An error occurred during login. Please try again.",
+    "login_failed": "Login failed. Please try again."
   },
   "tasks": {
     "add_new_task": "Add New Task",

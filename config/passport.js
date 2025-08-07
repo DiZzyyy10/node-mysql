@@ -31,16 +31,16 @@ module.exports = function (app) {
         .select("*")
         .then(async function (results) {
           if (results.length === 0) {
-            return done(null, false, {message: "Invalid User"});
+            return done(null, false, {message: "Username not found. Please check your username or sign up for a new account."});
           } else if (await bcrypt.compare(password, results[0].password)) {
             return done(null, results[0]);
           } else {
-            return done(null, false, {message: "Invalid User"});
+            return done(null, false, {message: "Incorrect password. Please try again."});
           }
         })
         .catch(function (err) {
-          console.error(err);
-          return done(null, false, {message: err.toString()})
+          console.error('Database error during authentication:', err);
+          return done(null, false, {message: "Login failed due to a system error. Please try again later."})
         });
     }
   ));
