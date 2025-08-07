@@ -106,14 +106,41 @@ NODE_ENV=development
 PORT=3000
 ```
 
-### 4. Run Database Migrations
+### 4. Create Database Tables
 
-```bash
-# Create database tables
-npx knex migrate:latest
+Since this application doesn't use migrations, you need to create the tables manually:
 
-# (Optional) Seed with sample data
-npx knex seed:run
+```sql
+-- Connect to your database
+mysql -u root -p todo_app
+
+-- Create users table
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create tasks table
+CREATE TABLE tasks (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  content TEXT NOT NULL,
+  priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+  due_date DATE NULL,
+  completed BOOLEAN DEFAULT FALSE,
+  status ENUM('todo', 'in_progress', 'done') DEFAULT 'todo',
+  order_position INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_user_status (user_id, status),
+  INDEX idx_user_priority (user_id, priority)
+);
+
+-- Exit MySQL
+EXIT;
 ```
 
 ### 5. Start the Application
@@ -165,9 +192,33 @@ sudo mysql -u root -p
 > CREATE USER 'taskflow'@'localhost' IDENTIFIED BY 'raspberry_password';
 > GRANT ALL PRIVILEGES ON todo_app.* TO 'taskflow'@'localhost';
 > FLUSH PRIVILEGES;
-> EXIT;
 
-npx knex migrate:latest
+> USE todo_app;
+
+> CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+
+> CREATE TABLE tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    content TEXT NOT NULL,
+    priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+    due_date DATE NULL,
+    completed BOOLEAN DEFAULT FALSE,
+    status ENUM('todo', 'in_progress', 'done') DEFAULT 'todo',
+    order_position INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_status (user_id, status),
+    INDEX idx_user_priority (user_id, priority)
+  );
+
+> EXIT;
 ```
 
 6. **Run TaskFlow**:
@@ -294,6 +345,12 @@ mysql -u root -p -h localhost
 
 # Verify .env file
 cat .env
+
+# Check if tables exist
+mysql -u root -p todo_app -e "SHOW TABLES;"
+
+# Verify table structure
+mysql -u root -p todo_app -e "DESCRIBE users; DESCRIBE tasks;"
 ```
 
 **Port Already in Use**
