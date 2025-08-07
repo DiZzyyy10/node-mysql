@@ -1,0 +1,77 @@
+{
+  "app": {
+    "title": "TaskFlow",
+    "tagline": "あなたの生産性向上パートナー"
+  },
+  "navigation": {
+    "list_view": "リスト表示",
+    "kanban_view": "カンバン表示",
+    "logout": "ログアウト",
+    "signin": "サインイン",
+    "language": "言語"
+  },
+  "auth": {
+    "signin_title": "サインイン",
+    "signup_title": "サインアップ",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "signin_button": "サインイン",
+    "signup_button": "サインアップ",
+    "no_account": "アカウントをお持ちでないですか？",
+    "have_account": "既にアカウントをお持ちですか？"
+  },
+  "tasks": {
+    "add_new_task": "新しいタスクを追加",
+    "task_placeholder": "タスクを入力してください...",
+    "priority": "優先度",
+    "due_date": "期限",
+    "add_task": "タスクを追加",
+    "edit_task": "タスクを編集",
+    "delete_task": "タスクを削除",
+    "save_changes": "変更を保存",
+    "cancel": "キャンセル",
+    "completed": "完了",
+    "pending": "未完了"
+  },
+  "priority": {
+    "high": "高",
+    "medium": "中",
+    "low": "低"
+  },
+  "status": {
+    "todo": "未着手",
+    "in_progress": "進行中",
+    "done": "完了"
+  },
+  "search": {
+    "search_tasks": "タスクを検索...",
+    "all_priorities": "すべての優先度",
+    "all_status": "すべての状態",
+    "all_due_dates": "すべての期限",
+    "clear_filters": "フィルターをクリア",
+    "active_filters": "アクティブなフィルター:",
+    "no_results": "タスクが見つかりません",
+    "adjust_filters": "検索条件やフィルターを調整してください。"
+  },
+  "due_dates": {
+    "overdue": "期限切れ",
+    "due_today": "今日期限",
+    "due_tomorrow": "明日期限",
+    "this_week": "今週中",
+    "no_date": "期限なし",
+    "overdue_by": "{{days}}日期限切れ",
+    "due_in": "あと{{days}}日"
+  },
+  "messages": {
+    "task_added": "タスクが正常に追加されました",
+    "task_updated": "タスクが正常に更新されました",
+    "task_deleted": "タスクが正常に削除されました",
+    "confirm_delete": "このタスクを削除してもよろしいですか？",
+    "please_enter_task": "タスクを入力してください"
+  },
+  "kanban": {
+    "todo_column": "未着手",
+    "progress_column": "進行中",
+    "done_column": "完了"
+  }
+}

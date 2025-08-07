@@ -1,0 +1,77 @@
+{
+  "app": {
+    "title": "TaskFlow",
+    "tagline": "Your personal productivity companion"
+  },
+  "navigation": {
+    "list_view": "List View",
+    "kanban_view": "Kanban View",
+    "logout": "Logout",
+    "signin": "Sign in",
+    "language": "Language"
+  },
+  "auth": {
+    "signin_title": "Sign In",
+    "signup_title": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "signin_button": "Sign In",
+    "signup_button": "Sign Up",
+    "no_account": "Don't have an account?",
+    "have_account": "Already have an account?"
+  },
+  "tasks": {
+    "add_new_task": "Add New Task",
+    "task_placeholder": "Enter your task...",
+    "priority": "Priority",
+    "due_date": "Due Date",
+    "add_task": "Add Task",
+    "edit_task": "Edit Task",
+    "delete_task": "Delete Task",
+    "save_changes": "Save Changes",
+    "cancel": "Cancel",
+    "completed": "Completed",
+    "pending": "Pending"
+  },
+  "priority": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "status": {
+    "todo": "To Do",
+    "in_progress": "In Progress",
+    "done": "Done"
+  },
+  "search": {
+    "search_tasks": "Search tasks...",
+    "all_priorities": "All Priorities",
+    "all_status": "All Status",
+    "all_due_dates": "All Due Dates",
+    "clear_filters": "Clear Filters",
+    "active_filters": "Active filters:",
+    "no_results": "No tasks found",
+    "adjust_filters": "Try adjusting your search terms or filters."
+  },
+  "due_dates": {
+    "overdue": "Overdue",
+    "due_today": "Due Today",
+    "due_tomorrow": "Due Tomorrow",
+    "this_week": "This Week",
+    "no_date": "No Due Date",
+    "overdue_by": "Overdue by {{days}} day(s)",
+    "due_in": "Due in {{days}} days"
+  },
+  "messages": {
+    "task_added": "Task added successfully",
+    "task_updated": "Task updated successfully",
+    "task_deleted": "Task deleted successfully",
+    "confirm_delete": "Are you sure you want to delete this task?",
+    "please_enter_task": "Please enter a task"
+  },
+  "kanban": {
+    "todo_column": "To Do",
+    "progress_column": "In Progress", 
+    "done_column": "Done"
+  }
+}

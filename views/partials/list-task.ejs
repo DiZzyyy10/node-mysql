@@ -19,7 +19,7 @@
             <div class="d-flex justify-content-between align-items-start mb-2">
               <p class="card-text mb-0"><%= todo.content %></p>
               <span class="badge priority-badge bg-<%= todo.priority === 'high' ? 'danger' : todo.priority === 'medium' ? 'warning' : 'success' %>">
-                <%= todo.priority === 'high' ? '🔴 High' : todo.priority === 'medium' ? '🟡 Medium' : '🟢 Low' %>
+                <%= todo.priority === 'high' ? 'High' : todo.priority === 'medium' ? 'Medium' : 'Low' %>
               </span>
             </div>
             <small class="text-muted">

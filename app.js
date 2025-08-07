@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const i18n = require('./config/i18n');
 
 const app = express();
 
@@ -15,6 +16,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// i18n middleware
+app.use(i18n.init);
+
+// Language middleware
+app.use((req, res, next) => {
+  // Check for language in query params, cookies, or use default
+  const lang = req.query.lang || req.cookies.language || 'en';
+  
+  // Validate language
+  if (['en', 'ja'].includes(lang)) {
+    i18n.setLocale(req, lang);
+    res.cookie('language', lang, { maxAge: 365 * 24 * 60 * 60 * 1000 }); // 1 year
+  }
+  
+  // Make translation function available in templates
+  res.locals.__ = res.__;
+  res.locals.currentLang = i18n.getLocale(req);
+  
+  next();
+});
 
 // authorization
 require("./config/passport")(app);
